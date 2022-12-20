@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@media screen(sm) {
+  .header-bg {
+    background-image: url('/assets/banner.svg');
+    background-size: cover;
+  }
+}
+@media not screen(sm) {
+  .header-bg-m {
+    background-image: url('/assets/banner-m.svg');
+    background-size: cover;
+  }
+}
+
+.footer-bg {
+  background-image: url('/assets/footer.svg');
+  background-size: cover;
+}

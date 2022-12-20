@@ -1,6 +1,6 @@
 import numeral from 'numeral';
 import { EChartsOption } from 'echarts';
-import React, { PropsWithChildren, Suspense, use } from 'react';
+import React, { PropsWithChildren, Suspense, use, useMemo } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { Wordcloud } from '@visx/wordcloud';
 import { Text } from '@visx/text';
@@ -8,12 +8,20 @@ import * as echarts from 'echarts';
 import { Audiowide, Poppins } from '@next/font/google';
 import Banner from '../assets/banner.svg';
 import Image from 'next/image';
-import { scaleLog } from '@visx/scale';
-const audioWide = Audiowide({ weight: '400' });
-const poppins = Poppins({ weight: ['400', '200'], subsets: ['latin'] });
+import { scaleLinear, scaleLog, scaleOrdinal } from '@visx/scale';
+import { Group } from '@visx/group';
+import { ParentSize } from '@visx/responsive';
+import { BarRounded, Pie } from '@visx/shape';
+import '../styles/Home.module.css';
+import EChartsReact from 'echarts-for-react';
+const audioWide = Audiowide({ weight: '400', subsets: ['latin'] });
+const poppins = Poppins({
+  weight: ['400', '600', '500', '700'],
+  subsets: ['latin'],
+});
 
 echarts.registerTheme('wonderland', {
-  color: ['#4ea397', '#22c3aa', '#7bd9a5', '#d0648a', '#f58db2', '#f2b3c9'],
+  color: ['#1DB242'],
   backgroundColor: 'rgba(255,255,255,0)',
   textStyle: {},
   title: {
@@ -343,7 +351,7 @@ echarts.registerTheme('wonderland', {
     },
   },
   visualMap: {
-    color: ['#d0648a', '#22c3aa', '#adfff1'],
+    color: ['#1DB242'],
   },
   dataZoom: {
     backgroundColor: 'rgba(255,255,255,0)',
@@ -369,12 +377,7 @@ echarts.registerTheme('wonderland', {
 
 function Header() {
   return (
-    <div
-      className={audioWide.className + ' pl-9'}
-      style={{
-        backgroundImage: `url(../assets/banner.svg)`,
-      }}
-    >
+    <div className={audioWide.className + ' pl-9 header-bg header-bg-m '}>
       <div className='pt-12 pb-6'>Youtube LOGO</div>
       <h1 className='text-6xl text-gray-900 uppercase pb-6'>2022 Review</h1>
     </div>
@@ -383,14 +386,14 @@ function Header() {
 
 function TwoCardsGrid(props: React.PropsWithChildren<{}>) {
   return (
-    <div className='inline-grid grid-flow-row gap-4 sm:grid-cols-2 items-center justify-start px-3'>
+    <div className='inline-grid grid-flow-row gap-4 sm:grid-cols-2 items-center sm:justify-start px-3'>
       {props.children}
     </div>
   );
 }
 function ThreeCardsGrid(props: React.PropsWithChildren<{}>) {
   return (
-    <div className='inline-grid grid-flow-row gap-4 sm:grid-cols-3 items-center justify-start px-3'>
+    <div className='inline-grid grid-flow-row gap-4 sm:grid-cols-3 items-center sm:justify-start px-3'>
       {props.children}
     </div>
   );
@@ -493,34 +496,29 @@ function Second(props: SecondProps) {
     },
     tooltip: {},
     visualMap: {
-      min: 0,
+      min: -1,
       max: 10000,
-      // left: 0,
+      inRange: {
+        color: ['rgba(29,178,66,0.2)', 'rgba(29,178,66,0.5)', '#1db242'],
+        symbolSize: [10, 20],
+      },
       show: false,
     },
     calendar: {
-      // top: 'center',
-      // left: 'center',
-      // right: 30,
-      left: 12,
+      // left: '0%',
       top: 'center',
       cellSize: [32, 24],
-      range: '2016',
+      range: ['2016-01-03', '2016-10-01'],
       splitLine: {
         show: false,
       },
       itemStyle: {
         borderWidth: 3,
         borderColor: '#fff',
-        // borderDashOffset: 2,
       },
       yearLabel: { show: false },
       dayLabel: {
         show: true,
-        margin: -18,
-        // align: 'right',
-        // distance: 0,
-        // padding: -10,
         fontWeight: 'lighter',
         nameMap: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       },
@@ -538,7 +536,7 @@ function Second(props: SecondProps) {
     ],
   };
   function getVirtualData(year: string) {
-    const date = +echarts.time.parse(year + '-01-03');
+    const date = +echarts.time.parse(year + '-01-01');
     const end = +echarts.time.parse(+year + '-10-31');
     const dayTime = 3600 * 24 * 1000;
     const data: [string, number][] = [];
@@ -554,13 +552,14 @@ function Second(props: SecondProps) {
   return (
     <>
       <div className='inline-flex flex-col h-full space-y-10 items-start justify-between px-6 py-5 bg-white rounded-2xl'>
-        <div className='inline-flex space-x-16 items-start justify-between'>
+        <div className='inline-flex  w-full space-x-16 items-start justify-between'>
           <div className='inline-flex flex-col space-y-0.5 items-start justify-start'>
             <p className='text-2xl font-bold text-gray-900 uppercase'>
               {props.videos}
             </p>
             <p className='opacity-50 text-xs text-gray-900'>Videos</p>
           </div>
+
           <div className='inline-flex flex-col space-y-0.5 items-center justify-start'>
             <p className='text-2xl font-bold text-gray-900 uppercase'>
               {props.yearlyTotal}
@@ -600,29 +599,37 @@ function Second(props: SecondProps) {
         </div>
       </div>
       <div className='inline-flex flex-col px-6 py-5 space-y-10 items-center justify-start bg-white rounded-2xl'>
-        <ReactECharts
-          option={options}
-          lazyUpdate
-          theme={'wonderland'}
-          style={{
-            width: '100%',
-            height: 184,
-          }}
-          opts={{
-            locale: 'en',
-            height: 184,
-          }}
-        ></ReactECharts>
-        {/* <div className='inline-flex flex-col space-y-0.5 items-start justify-start'></div> */}
+        <ParentSize>
+          {({ width }) => (
+            <EChartsReact
+              option={options}
+              opts={{ renderer: 'svg', locale: 'en', height: 184 }}
+              theme={'wonderland'}
+              style={{
+                width: width,
+                height: 184,
+              }}
+            />
+          )}
+        </ParentSize>
       </div>
     </>
   );
 }
 function CardBase(props: PropsWithChildren<{}>) {
   return (
-    <div className='inline-flex flex-col w-full h-full space-y-5 items-start justify-start px-6 py-5 bg-white rounded-2xl'>
-      {props.children}
-    </div>
+    <ParentSize>
+      {({ width }) => (
+        <div
+          style={{
+            minWidth: width,
+          }}
+          className='inline-flex flex-col w-full h-full space-y-5 items-start justify-start px-6 py-5 bg-white rounded-2xl'
+        >
+          {props.children}
+        </div>
+      )}
+    </ParentSize>
   );
 }
 
@@ -657,163 +664,249 @@ function Third() {
 
   return (
     <CardBase>
-      <div className='flex flex-col w-full h-full'>
-        <Wordcloud
-          width={500}
-          height={500}
-          padding={2}
-          fontSize={fontSizeSetter}
-          spiral={'rectangular'}
-          words={words}
-          rotate={() => 0}
-          random={() => 0.5}
-        >
-          {(cloudWords) =>
-            cloudWords.map((w, i) => (
-              <Text
-                key={w.text}
-                fill={colors[i % colors.length]}
-                textAnchor={'middle'}
-                transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
-                fontSize={w.size}
-                fontFamily={w.font}
-              >
-                {w.text}
-              </Text>
-            ))
-          }
-        </Wordcloud>
+      <div
+        className='flex flex-col w-full h-full'
+        style={{
+          minWidth: 329,
+        }}
+      >
+        <ParentSize>
+          {({ width }) => (
+            <Wordcloud
+              width={width}
+              height={300}
+              padding={2}
+              fontWeight={700}
+              fontSize={fontSizeSetter}
+              spiral={'rectangular'}
+              words={words}
+              rotate={() => 0}
+              random={() => 0.5}
+            >
+              {(cloudWords) =>
+                cloudWords.map((w, i) => (
+                  <Text
+                    key={w.text}
+                    fill={colors[i % colors.length]}
+                    textAnchor={'middle'}
+                    transform={`translate(${w.x}, ${w.y}) rotate(${w.rotate})`}
+                    fontSize={w.size}
+                    fontFamily={w.font}
+                    fontWeight={w.weight}
+                  >
+                    {w.text}
+                  </Text>
+                ))
+              }
+            </Wordcloud>
+          )}
+        </ParentSize>
       </div>
     </CardBase>
   );
 }
-function Fourth() {
-  const options: EChartsOption = {
-    title: {
-      show: false,
+
+interface TopRecordData {
+  name: string;
+  counts: number;
+}
+interface FourthProp {
+  shadowColor: string;
+  color: string;
+}
+function Fourth(props: FourthProp) {
+  const mockData: TopRecordData[] = [
+    {
+      name: 'A',
+      counts: 3912,
     },
-    tooltip: {
-      trigger: 'axis',
-      axisPointer: {
-        type: 'shadow',
-      },
+    {
+      name: 'B',
+      counts: 2648,
     },
-    legend: {},
-    grid: {
-      left: 0,
-      right: '4%',
-      bottom: '3%',
-      containLabel: true,
+    {
+      name: 'C',
+      counts: 1929,
     },
-    xAxis: {
-      show: false,
-      type: 'value',
-      boundaryGap: [0, 0.02],
+    {
+      name: 'D',
+      counts: 692,
     },
-    yAxis: {
-      type: 'category',
-      show: true,
-      splitLine: { show: false },
-      // offset: 10,
-      nameLocation: 'middle',
-      axisLine: { show: false, onZero: false },
-      axisLabel: { show: true, margin: 0 },
-      minorSplitLine: { show: false },
-      data: ['Brazil', 'Indonesia', 'USA', 'India', 'China', 'World'],
-    },
-    series: [
-      {
-        name: '2011',
-        showBackground: true,
-        backgroundStyle: {
-          borderRadius: 10,
-        },
-        type: 'bar',
-        itemStyle: {
-          borderRadius: 10,
-        },
-        label: { show: false },
-        labelLine: { showAbove: true },
-        data: [18203, 23489, 29034, 104970, 131744, 630230],
-      },
-    ],
-  };
+  ];
 
   return (
     <CardBase>
-      <ReactECharts
-        lazyUpdate
+      <div className='text-sm font-semibold mb-7 w-full h-full border-b'>
+        {'Videos'}
+      </div>
+
+      <div
+        className='w-full h-full grid grid-flow-row'
         style={{
-          width: '100%',
+          minWidth: 329,
         }}
-        theme={'wonderland'}
-        option={options}
-      />
+      >
+        <div className='grid grid-cols-2 mb-4 w-full'>
+          <div className='font-normal text-xs'>{'Video'}</div>
+          <div className='font-normal text-xs text-end'>{'Counts'}</div>
+        </div>
+        <div className='grid grid-flow-row gap-5 w-full h-full'>
+          {mockData.map((data, key) => {
+            return (
+              <div key={`bar-${key}`} className=''>
+                <div className='grid grid-cols-2 mb-1'>
+                  <h6 className='text-xs font-medium'>{data.name}</h6>
+                  <h6 className='text-xs font-medium text-end'>
+                    {data.counts}
+                  </h6>
+                </div>
+                <ParentSize>
+                  {({ width }) => {
+                    const scale = scaleLinear<number>({
+                      range: [0, width],
+                      round: true,
+                      domain: [0, Math.max(...mockData.map((d) => d.counts))],
+                    });
+                    return (
+                      <svg width={width} height={8}>
+                        <BarRounded
+                          radius={8}
+                          x={0}
+                          all
+                          fill={props.shadowColor}
+                          y={0}
+                          width={width}
+                          height={8}
+                        ></BarRounded>
+                        <BarRounded
+                          radius={8}
+                          x={0}
+                          all
+                          y={0}
+                          fill={props.color}
+                          width={scale(data.counts)}
+                          height={8}
+                        ></BarRounded>
+                      </svg>
+                    );
+                  }}
+                </ParentSize>
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </CardBase>
   );
 }
 
-function Fifth() {
-  const options: EChartsOption = {};
-  const mockData = {
-    content: 'REPLACEMENT',
-  };
-  return (
-    <>
-      <div className='col-span-2'>
-        <CardBase>
-          <p className='text-sm font-semibold text-gray-900'>
-            We told ChatGPT to write a story with your keywords... here is what
-            happend
-          </p>
-          <div className='flex flex-col space-y-1 items-center justify-start'>
-            <p className='text-xs text-gray-900'>
-              {/* TODO */}
-              {mockData.content}
-              <br />
-            </p>
-            <div className='inline-flex space-x-1.5 items-center justify-start'>
-              <p className='text-xs font-semibold text-green-600'>More</p>
-              <div className='w-2.5 h-1.5 bg-pink-900 bg-opacity-50 border rounded-full border-green-600' />
-            </div>
-          </div>
-        </CardBase>
-      </div>
-      <div className='inline-flex flex-col space-y-3 items-start justify-start px-5 py-4 bg-white rounded-2xl'>
-        <p className='text-sm font-semibold text-gray-900'>
-          The 2022 YouGraph.
-        </p>
-        <ReactECharts
-          style={{
-            width: '100%',
-          }}
-          option={options}
-        />
-      </div>
-    </>
-  );
+interface SixthProp {
+  name: string;
+  colorSet: string[];
 }
+interface SixthData {
+  name: string;
+  value: number;
+}
+function Sixth(props: SixthProp) {
+  const data: SixthData[] = [
+    {
+      name: 'Chinese',
+      value: 60,
+    },
+    {
+      name: 'English',
+      value: 25,
+    },
+    {
+      name: 'Cantonese',
+      value: 10,
+    },
+    {
+      name: 'Others',
+      value: 5,
+    },
+  ];
 
-function Sixth() {
-  const options = {};
+  const total = data.reduce((acc, cur) => acc + cur.value, 0);
+
+  const getColor = scaleOrdinal({
+    domain: data.map((d) => d.name),
+    range: props.colorSet,
+  });
   return (
     <CardBase>
-      <ReactECharts
-        style={{
-          width: '100%',
-        }}
-        option={options}
-      />
+      <div className='text-sm font-semibold mb-7 w-full h-full border-b'>
+        {props.name}
+      </div>
+      <div className='w-full h-full inline-grid grid-cols-3'>
+        <div className='col-span-2 w-full h-full'>
+          <ParentSize>
+            {({ width }) => {
+              const height = 100;
+              const centerY = height / 2;
+              const radius = Math.min(width, height) / 2;
+              const donutThickness = 11.1;
+              const centerX = width / 2;
+              return (
+                <svg width={width} height={height}>
+                  <Group top={centerY} left={centerX}>
+                    <Pie
+                      data={data}
+                      pieValue={(d) => d.value}
+                      outerRadius={radius}
+                      innerRadius={radius - donutThickness}
+                    >
+                      {({ path, arcs }) => (
+                        <g>
+                          {arcs.map((arc, key) => (
+                            <path
+                              key={key}
+                              d={
+                                path({
+                                  ...arc,
+                                }) ?? ''
+                              }
+                              fill={getColor(arc.data.name)}
+                            ></path>
+                          ))}
+                        </g>
+                      )}
+                    </Pie>
+                  </Group>
+                </svg>
+              );
+            }}
+          </ParentSize>
+        </div>
+        <div className='grid grid-flow-row gap-3 w-full h-full'>
+          {data
+            .sort((a, b) => b.value - a.value)
+            .map((d, i) => {
+              return (
+                <div key={i} className='font-medium text-xs flex gap-1.5'>
+                  <div
+                    className='w-2.5 h-2.5 flex-none flex-grow-0 my-1'
+                    style={{ background: getColor(d.name), borderRadius: 44 }}
+                  ></div>
+                  <h6>{d.name}</h6>
+                  <span>{`${(d.value / total) * 100}%`}</span>
+                </div>
+              );
+            })}
+        </div>
+      </div>
     </CardBase>
   );
 }
-function Seventh() {
+
+function Footer() {
   return (
-    <img
-      className='rounded-3xl'
-      style={{ width: 1896, height: 754 }}
-      src='https://via.placeholder.com/1896x754'
-    />
+    <div
+      className={`${audioWide.className} font-normal m-auto text-3xl text-center self-center`}
+    >
+      {'See you next year!'}
+    </div>
   );
 }
 export default function Review() {
@@ -821,7 +914,7 @@ export default function Review() {
     <Suspense>
       <div className={`${poppins.className} bg-gray-100`}>
         <Header />
-        <div className='grid gap-4 grid-cols-1 pt-4'>
+        <div className='grid gap-4 grid-cols-1 py-4'>
           <TwoCardsGrid>
             <First />
           </TwoCardsGrid>
@@ -841,19 +934,31 @@ export default function Review() {
             <Third />
           </ThreeCardsGrid>
           <ThreeCardsGrid>
-            <Fourth />
-            <Fourth />
-            <Fourth />
+            <Fourth shadowColor='#FFF2D2' color='#FFC01F' />
+            <Fourth shadowColor='rgba(29, 243, 166, 0.2)' color='#1DF3A6' />
+            <Fourth shadowColor='#EAE8FF' color='#968DFF' />
           </ThreeCardsGrid>
 
           <ThreeCardsGrid>
-            <Sixth />
-            <Sixth />
-            <Sixth />
+            <Sixth
+              colorSet={['#1FAEFF', '#FFF61F', '#1DF3A6', '#1DCDF3']}
+              name={'Language'}
+            />
+            <Sixth
+              colorSet={['#1DF3A6', '#FFF61F', '#FFAEF2', '#1DCDF3']}
+              name={'Duration'}
+            />
+            <Sixth
+              colorSet={['#4F8BFF', '#FFF61F', '#1DF3A6', '#FFAEF2']}
+              name={'Geography'}
+            />
           </ThreeCardsGrid>
           {/* <Seventh /> */}
         </div>
       </div>
+      <footer className='flex w-full footer-bg h-32'>
+        <Footer />
+      </footer>
     </Suspense>
   );
 }
