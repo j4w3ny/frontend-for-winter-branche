@@ -1,6 +1,5 @@
 import React, { Suspense } from 'react';
 import { Audiowide, Poppins } from '@next/font/google';
-import { numeral } from './client';
 import { format } from 'date-fns';
 import { decode } from 'html-entities';
 import {
@@ -9,11 +8,13 @@ import {
   Third,
   Fourth,
   Sixth,
+  First,
   TopRecordData,
   SixthData,
   WordData,
 } from './cards';
 import langTags from 'language-tags';
+
 import { getData } from './getData';
 import { NextPage } from 'next';
 import { redirect } from 'next/navigation';
@@ -46,88 +47,6 @@ function ThreeCardsGrid(props: React.PropsWithChildren<{}>) {
     </div>
   );
 }
-interface FirstProps {
-  name?: string;
-  search?: number;
-  likes?: number;
-  comments?: number;
-
-  totalHours: number;
-  videoCounts: number;
-  timePercents: number;
-  favoriteCategory: string;
-  favoriteVideo: string;
-}
-function First(props: React.PropsWithChildren<FirstProps>) {
-  const format = Intl.NumberFormat('en', { notation: 'compact' }).format;
-  return (
-    <>
-      <div className='inline-flex flex-col space-y-12 items-start justify-between p-4 sm:p-5 sm:bg-white rounded-2xl'>
-        <div className='inline-flex items-center justify-between w-full'>
-          <div className='inline-flex flex-col space-y-2 items-start justify-start'>
-            <p className='opacity-50 text-xs font-medium text-gray-900 uppercase'>
-              Hello{' '}
-            </p>
-            <p className='text-3xl font-bold text-gray-900 uppercase'>
-              {props.name ?? 'Chong'}!
-            </p>
-          </div>
-          <img
-            className='w-16 h-16 rounded-2xl'
-            src='https://via.placeholder.com/60x60'
-          />
-        </div>
-        <div className='inline-flex w-full space-x-16 items-start justify-between'>
-          <div className='inline-flex flex-col space-y-0.5 items-start justify-start w-16'>
-            <p className='text-3xl font-bold text-gray-900 uppercase'>
-              {props.search ?? 0 < 10000
-                ? props.search ?? 0
-                : numeral(props.search).format('0a')}
-            </p>
-            <p className='opacity-50 text-xs text-gray-900'>Searches</p>
-          </div>
-          <div className='inline-flex flex-col space-y-0.5 items-center justify-start w-16'>
-            <p className='text-3xl font-bold text-gray-900 uppercase'>
-              {props.likes ?? 0 < 10000
-                ? props.likes ?? 0
-                : numeral(props.likes).format('0a')}
-            </p>
-            <p className='opacity-50 text-xs text-gray-900'>Likes</p>
-          </div>
-          <div className='inline-flex flex-col space-y-0.5 items-end justify-start w-16'>
-            <p className='text-3xl font-bold text-right text-gray-900 uppercase'>
-              {props.comments ?? 0 < 10000
-                ? props.comments ?? 0
-                : numeral(props.comments).format('0a')}
-            </p>
-            <p className='opacity-50 text-xs text-right text-gray-900'>
-              Comments
-            </p>
-          </div>
-        </div>
-      </div>
-      <div className='inline-flex flex-col  space-y-5 h-full items-start justify-center px-6 py-5 bg-white rounded-2xl'>
-        <p className='text-base leading-snug text-gray-900'>
-          This year... 🧐
-          <br />
-          You Spent <strong>{format(props.totalHours)} hours</strong> and
-          watched <strong>{format(props.videoCounts)} videos</strong> in the
-          total of 217 days.
-        </p>
-        <p
-          className='text-base leading-snug text-gray-900'
-          // style={{ width: 894 }}
-        >
-          Spending <strong>{format(props.timePercents)}%</strong> of your time
-          on <strong>{props.favoriteCategory}</strong>
-          <br />
-          related videos & Your Favourite Video is <br />
-          <strong>{decode(props.favoriteVideo)}</strong>
-        </p>
-      </div>
-    </>
-  );
-}
 
 function Footer() {
   return (
@@ -139,15 +58,6 @@ function Footer() {
   );
 }
 
-// async function getData() {
-//   // const res = await fetch(process.env.SERVER_ADDR!);
-//   // if (!res.ok) {
-//   //   // This will activate the closest `error.js` Error Boundary
-//   //   throw new Error('Failed to fetch data');
-//   // }
-//   // return res.json();
-//   return
-// }
 export default async function ReviewPage({
   params,
 }: {
@@ -280,7 +190,7 @@ export default async function ReviewPage({
     .reduce(reduceFn, {});
   const searchWords = toWordDatas(searchWordsFreqMap);
   return (
-    <Suspense>
+    <Suspense fallback='loading...'>
       <div className={`${poppins.className} bg-gray-100`}>
         <Header />
         <div className='grid gap-4 grid-cols-1 py-4'>
@@ -355,7 +265,7 @@ export default async function ReviewPage({
             <Sixth
               data={durationPieData}
               colorSet={['#1DF3A6', '#FFF61F', '#FFAEF2', '#1DCDF3']}
-              name={'Duration'}
+              name={'Category Duration'}
             />
             {/* <Sixth
               colorSet={['#4F8BFF', '#FFF61F', '#1DF3A6', '#FFAEF2']}

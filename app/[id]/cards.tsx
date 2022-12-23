@@ -8,6 +8,91 @@ import { EChartsOption } from 'echarts';
 import { BarRounded, Pie } from './client';
 import { Poppins } from '@next/font/google';
 import { union } from 'lodash';
+import numeral from 'numeral';
+import { decode } from 'html-entities';
+import { commonWords } from './constant';
+interface FirstProps {
+  name?: string;
+  search?: number;
+  likes?: number;
+  comments?: number;
+
+  totalHours: number;
+  videoCounts: number;
+  timePercents: number;
+  favoriteCategory: string;
+  favoriteVideo: string;
+}
+export function First(props: React.PropsWithChildren<FirstProps>) {
+  const format = Intl.NumberFormat('en', { notation: 'compact' }).format;
+  return (
+    <>
+      <div className='inline-flex flex-col space-y-12 items-start justify-between p-4 sm:p-5 sm:bg-white rounded-2xl'>
+        <div className='inline-flex items-center justify-between w-full'>
+          <div className='inline-flex flex-col space-y-2 items-start justify-start'>
+            <p className='opacity-50 text-xs font-medium text-gray-900 uppercase'>
+              Hello{' '}
+            </p>
+            <p className='text-3xl font-bold text-gray-900 uppercase'>
+              {props.name ?? 'Chong'}!
+            </p>
+          </div>
+          <img
+            className='w-16 h-16 rounded-2xl'
+            src='https://via.placeholder.com/60x60'
+          />
+        </div>
+        <div className='inline-flex w-full space-x-16 items-start justify-between'>
+          <div className='inline-flex flex-col space-y-0.5 items-start justify-start w-16'>
+            <p className='text-3xl font-bold text-gray-900 uppercase'>
+              {props.search ?? 0 < 10000
+                ? props.search ?? 0
+                : numeral(props.search).format('0a')}
+            </p>
+            <p className='opacity-50 text-xs text-gray-900'>Searches</p>
+          </div>
+          <div className='inline-flex flex-col space-y-0.5 items-center justify-start w-16'>
+            <p className='text-3xl font-bold text-gray-900 uppercase'>
+              {props.likes ?? 0 < 10000
+                ? props.likes ?? 0
+                : numeral(props.likes).format('0a')}
+            </p>
+            <p className='opacity-50 text-xs text-gray-900'>Likes</p>
+          </div>
+          <div className='inline-flex flex-col space-y-0.5 items-end justify-start w-16'>
+            <p className='text-3xl font-bold text-right text-gray-900 uppercase'>
+              {props.comments ?? 0 < 10000
+                ? props.comments ?? 0
+                : numeral(props.comments).format('0a')}
+            </p>
+            <p className='opacity-50 text-xs text-right text-gray-900'>
+              Comments
+            </p>
+          </div>
+        </div>
+      </div>
+      <div className='inline-flex flex-col  space-y-5 h-full items-start justify-center px-6 py-5 bg-white rounded-2xl'>
+        <p className='text-base leading-snug text-gray-900'>
+          This year... 🧐
+          <br />
+          You Spent <strong>{format(props.totalHours)} hours</strong> and
+          watched <strong>{format(props.videoCounts)} videos</strong> in the
+          total of 217 days.
+        </p>
+        <p
+          className='text-base leading-snug text-gray-900'
+          // style={{ width: 894 }}
+        >
+          Spending <strong>{format(props.timePercents)}%</strong> of your time
+          on <strong>{props.favoriteCategory}</strong>
+          <br />
+          related videos & Your Favourite Video is <br />
+          <strong>{decode(props.favoriteVideo)}</strong>
+        </p>
+      </div>
+    </>
+  );
+}
 
 interface SecondProps {
   videos: number;
@@ -184,8 +269,6 @@ interface ThirdProps {
 }
 
 export function Third(props: ThirdProps) {
-  const colors = ['#143059', '#2F6B9A', '#82a6c2'];
-
   const fontScale = scaleLog({
     domain: [
       Math.min(...props.words.map((w) => w.value)),
@@ -194,7 +277,11 @@ export function Third(props: ThirdProps) {
     range: [20, 50],
   });
   const fontSizeSetter = (datum: WordData) => fontScale(datum.value);
-
+  console.log(props.words);
+  const words = props.words
+    .filter((val) => !commonWords.includes(val.text.toLowerCase()))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 100);
   return (
     <CardBase>
       <h1 className='text-sm font-semibold'>{props.name}</h1>
@@ -213,9 +300,9 @@ export function Third(props: ThirdProps) {
               fontWeight={700}
               fontSize={fontSizeSetter}
               spiral={'rectangular'}
-              words={props.words}
+              words={words}
               rotate={() => 0}
-              random={() => 0.5}
+              // random={() => 0.5}
             >
               {(cloudWords) =>
                 cloudWords.map((w, i) => (
@@ -363,8 +450,11 @@ export function Sixth(props: SixthProp) {
   });
   return (
     <CardBase>
-      <div className='text-sm font-semibold mb-7 w-full h-full border-b'>
-        {props.name}
+      {/* <div className='w-full h-full grid grid-rows-2'> */}
+      <div className='w-full mb-7 '>
+        <div className='text-sm font-semibold w-full h-full border-b'>
+          {props.name}
+        </div>
       </div>
       <div className='w-full h-full inline-grid grid-cols-3'>
         <div className='col-span-2 w-full h-full'>
@@ -416,13 +506,16 @@ export function Sixth(props: SixthProp) {
                     className='w-2.5 h-2.5 flex-none flex-grow-0 my-1'
                     style={{ background: getColor(d.name), borderRadius: 44 }}
                   ></div>
-                  <h6>{d.name}</h6>
-                  <span>{`${format((d.value / total) * 100)}%`}</span>
+                  <div className='w-full grid'>
+                    <span>{d.name}</span>
+                    <span>{`${format((d.value / total) * 100)}%`}</span>
+                  </div>
                 </div>
               );
             })}
         </div>
       </div>
+      {/* </div> */}
     </CardBase>
   );
 }
