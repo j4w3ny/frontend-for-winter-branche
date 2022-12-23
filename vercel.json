@@ -1,0 +1,3 @@
+{
+  "buildCommand": "vercel env pull && next build"
+}
