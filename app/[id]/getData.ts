@@ -78,8 +78,10 @@ type DataDTO =
 export async function getData(uuid: string): Promise<DataDTO> {
   const server = process.env.SERVER_ADDR;
   const res = await fetch(`${server}/data/?id=${uuid}`);
+
   if (!res.ok) {
-    return { error: 'Server Error' };
+    const json = await res.json();
+    return { error: json.error };
   }
   const json = await res.json();
 
