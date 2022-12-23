@@ -34,7 +34,7 @@
     "iso-639-2": "^3.0.2",
     "language-tags": "^1.0.7",
     "lodash": "^4.17.21",
-    "next": "^13.0.8-canary.3",
+    "next": "^13.0.7",
     "next-transpile-modules": "^10.0.0",
     "numeral": "^2.0.6",
     "react": "^18.2.0",

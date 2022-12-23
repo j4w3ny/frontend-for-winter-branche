@@ -149,17 +149,12 @@ function Footer() {
 //   return
 // }
 export default async function ReviewPage({
-  searchParams,
+  params,
 }: {
-  searchParams?: URLSearchParams;
+  params: { id: string };
 }) {
-  if (!searchParams) {
-    redirect('/');
-  }
+  const id = params.id;
 
-  const param = new URLSearchParams(searchParams);
-  const id = param.get('id');
-  if (!id) return redirect('/');
   const dto = await getData(id);
   if ('error' in dto) return <div>Error Occuried: {dto.error}</div>;
   if (!dto.data.ready)
