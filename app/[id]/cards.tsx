@@ -269,19 +269,31 @@ interface ThirdProps {
 }
 
 export function Third(props: ThirdProps) {
+  const words = props.words
+    .filter((val) => !commonWords.includes(val.text.toLowerCase()))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 15);
   const fontScale = scaleLog({
     domain: [
-      Math.min(...props.words.map((w) => w.value)),
-      Math.max(...props.words.map((w) => w.value)),
+      Math.min(...words.map((w) => w.value)),
+      Math.max(...words.map((w) => w.value)),
     ],
     range: [20, 50],
   });
   const fontSizeSetter = (datum: WordData) => fontScale(datum.value);
-  console.log(props.words);
-  const words = props.words
-    .filter((val) => !commonWords.includes(val.text.toLowerCase()))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 100);
+  if (!words.length) {
+    return (
+      <CardBase>
+        <h1 className='text-sm font-semibold'>{props.name}</h1>
+        <div className='h-full flex'>
+          <p className='my-auto'>
+            {"Opus... Seems that there's empty cloud needed to be filled"}
+          </p>
+        </div>
+      </CardBase>
+    );
+  }
+
   return (
     <CardBase>
       <h1 className='text-sm font-semibold'>{props.name}</h1>
@@ -296,7 +308,7 @@ export function Third(props: ThirdProps) {
             <Wordcloud
               width={width}
               height={300}
-              padding={2}
+              padding={6}
               fontWeight={700}
               fontSize={fontSizeSetter}
               spiral={'rectangular'}
