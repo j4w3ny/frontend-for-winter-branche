@@ -4,7 +4,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    // appDir: true,
+    appDir: true,
     // transpilePackages: true,
   },
 };
