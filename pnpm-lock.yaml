@@ -3,6 +3,7 @@ lockfileVersion: 5.4
 specifiers:
   '@next/font': ^13.0.7
   '@stitches/react': ^1.2.8
+  '@types/language-tags': ^1.0.1
   '@types/lodash': ^4.14.191
   '@types/node': 18.11.14
   '@types/numeral': ^2.0.2
@@ -25,6 +26,8 @@ specifiers:
   eslint: ^8.30.0
   eslint-config-next: ^13.0.7
   html-entities: ^2.3.3
+  iso-639-2: ^3.0.2
+  language-tags: ^1.0.7
   lodash: ^4.17.21
   next: ^13.0.8-canary.3
   next-transpile-modules: ^10.0.0
@@ -39,6 +42,7 @@ specifiers:
 dependencies:
   '@next/font': 13.0.7
   '@stitches/react': 1.2.8_react@18.2.0
+  '@types/language-tags': 1.0.1
   '@types/lodash': 4.14.191
   '@types/node': 18.11.14
   '@types/react': 18.0.26
@@ -58,6 +62,8 @@ dependencies:
   eslint: 8.30.0
   eslint-config-next: 13.0.7_lzzuuodtsqwxnvqeq4g4likcqa
   html-entities: 2.3.3
+  iso-639-2: 3.0.2
+  language-tags: 1.0.7
   lodash: 4.17.21
   next: 13.0.8-canary.3_pbqkqtl3ytrxhl67w6o5ecjene
   next-transpile-modules: 10.0.0
@@ -405,6 +411,10 @@ packages:
 
   /@types/json5/0.0.29:
     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+    dev: false
+
+  /@types/language-tags/1.0.1:
+    resolution: {integrity: sha512-rTtRNIewaBrkMUfsCe7ES3xsTRQcEVgic2yoDY9hM3D/nwmABcG2du4l4+dTbWvfO8pUYwL4/2TbWFJa/AGc2g==}
     dev: false
 
   /@types/lodash/4.14.191:
@@ -1884,6 +1894,10 @@ packages:
 
   /isexe/2.0.0:
     resolution: {integrity: sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==}
+    dev: false
+
+  /iso-639-2/3.0.2:
+    resolution: {integrity: sha512-tna50aWwcGTIn81S9MzD1NSovHYTpFgmPVszHiLF5Vg/xmXAJ9XAkMOB9a8TH9Vi7qwf/x/8NJy2F+lM5OEwAw==}
     dev: false
 
   /js-sdsl/4.2.0:

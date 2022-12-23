@@ -11,6 +11,7 @@
   "dependencies": {
     "@next/font": "^13.0.7",
     "@stitches/react": "^1.2.8",
+    "@types/language-tags": "^1.0.1",
     "@types/lodash": "^4.14.191",
     "@types/node": "18.11.14",
     "@types/react": "18.0.26",
@@ -30,6 +31,8 @@
     "eslint": "^8.30.0",
     "eslint-config-next": "^13.0.7",
     "html-entities": "^2.3.3",
+    "iso-639-2": "^3.0.2",
+    "language-tags": "^1.0.7",
     "lodash": "^4.17.21",
     "next": "^13.0.8-canary.3",
     "next-transpile-modules": "^10.0.0",

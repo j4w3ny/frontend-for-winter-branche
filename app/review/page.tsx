@@ -13,6 +13,7 @@ import {
   SixthData,
   WordData,
 } from './cards';
+import langTags from 'language-tags';
 import { getData } from './getData';
 import { NextPage } from 'next';
 const audioWide = Audiowide({ weight: '400', subsets: ['latin'] });
@@ -192,10 +193,24 @@ export default async function ReviewPage({
     };
   });
 
-  const languagePieData: SixthData[] = data.lang.map((item) => {
+  const languagePieData: SixthData[] = Object.entries(
+    data.lang.reduce((acc, curr) => {
+      const lang = langTags(curr.language);
+      let name = lang.language()?.descriptions()[0] ?? 'Others';
+      if (name === 'No linguistic content') {
+        name = 'Others';
+      }
+      if (acc[name]) {
+        acc[name] += curr.lanCounts;
+      } else {
+        acc[name] = curr.lanCounts;
+      }
+      return acc;
+    }, {} as Record<string, number>)
+  ).map((val) => {
     return {
-      name: item.language,
-      value: item.lanCounts,
+      name: val[0],
+      value: val[1],
     };
   });
 
@@ -221,29 +236,10 @@ export default async function ReviewPage({
         return acc;
       }, {} as Record<string, number>)
   );
-  function wordFreq(text: string): WordData[] {
-    const words: string[] = text
-      .replace(/\./g, '')
-      .replace(/\W/g, ' ')
-      .split(/\s/);
-    const freqMap: Record<string, number> = {};
-
-    for (const w of words) {
-      if (!freqMap[w]) freqMap[w] = 0;
-      freqMap[w] += 1;
-    }
-    return Object.keys(freqMap).map((word) => ({
-      text: word,
-      value: freqMap[word],
-    }));
-  }
-  const cjkTesting =
-    /[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff\uff66-\uff9f]/g;
 
   const wordcloudData = data.year_detail.filter((val) =>
     val.watch_time && val.video_title
-      ? new Date(val.watch_time).getFullYear() == 2022 &&
-        !cjkTesting.test(val.video_title)
+      ? new Date(val.watch_time).getFullYear() == 2022
       : false
   );
 
