@@ -82,6 +82,6 @@ export async function getData(uuid: string): Promise<DataDTO> {
     return { error: 'Server Error' };
   }
   const json = await res.json();
-  console.log(json);
+
   return json;
 }
