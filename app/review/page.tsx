@@ -16,6 +16,7 @@ import {
 import langTags from 'language-tags';
 import { getData } from './getData';
 import { NextPage } from 'next';
+import { redirect } from 'next/navigation';
 const audioWide = Audiowide({ weight: '400', subsets: ['latin'] });
 const poppins = Poppins({
   weight: ['400', '600', '500', '700'],
@@ -152,15 +153,21 @@ export default async function ReviewPage({
 }: {
   searchParams?: URLSearchParams;
 }) {
-  if (!searchParams) return;
+  if (!searchParams) {
+    redirect('/');
+  }
 
   const param = new URLSearchParams(searchParams);
   const id = param.get('id');
-  if (!id) return;
-  const dto = (await getData(id)).data;
-  if (!dto.ready) return;
-  const data = dto.takeout;
-  if (!data) return;
+  if (!id) return redirect('/');
+  const dto = await getData(id);
+  if ('error' in dto) return redirect('/');
+  if (!dto.data.ready)
+    return (
+      <div>Data Visualization is not yet ready, please wait for a moment.</div>
+    );
+  const data = dto.data.takeout;
+  if (!data) return redirect('/');
   const totalHours =
     data.category_duration_detail.reduce((a, b) => a + b.watchTime_min, 0) / 60;
 
