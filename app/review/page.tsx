@@ -161,13 +161,13 @@ export default async function ReviewPage({
   const id = param.get('id');
   if (!id) return redirect('/');
   const dto = await getData(id);
-  if ('error' in dto) return redirect('/');
+  if ('error' in dto) return <div>Error Occuried: {dto.error}</div>;
   if (!dto.data.ready)
     return (
       <div>Data Visualization is not yet ready, please wait for a moment.</div>
     );
   const data = dto.data.takeout;
-  if (!data) return redirect('/');
+  if (!data) return <div>Error: Data is not yet ready.</div>;
   const totalHours =
     data.category_duration_detail.reduce((a, b) => a + b.watchTime_min, 0) / 60;
 
