@@ -76,7 +76,7 @@ export default async function ReviewPage({
     );
   const data = dto.data.takeout;
   if (!data) return <div>Error: Data is not yet ready.</div>;
-  console.log(data);
+
   const totalHours =
     data.category_duration_detail.reduce((a, b) => a + b.watchTime_min, 0) / 60;
 
@@ -130,7 +130,7 @@ export default async function ReviewPage({
     };
   });
 
-  const durationPieData: SixthData[] = data.category_duration_detail.map(
+  const categoryPieData: SixthData[] = data.category_duration_detail.map(
     (item) => {
       return {
         name: item.categoryName,
@@ -138,14 +138,25 @@ export default async function ReviewPage({
       };
     }
   );
-
+  const durationPieData: SixthData[] = [
+    {
+      name: '< 1 min',
+      value: data.duration.below_one_minute,
+    },
+    {
+      name: '1-5 min',
+      value: data.duration.one_to_five,
+    },
+    {
+      name: '5-10 min',
+      value: data.duration.five_to_ten,
+    },
+    {
+      name: '> 10 min',
+      value: data.duration.above_ten,
+    },
+  ];
   const heatmapData = Object.entries(data.heatmap);
-
-  // const wordcloudData = data.year_detail.filter((val) =>
-  //   val.watch_time && val.video_title
-  //     ? new Date(val.watch_time).getFullYear() == 2022
-  //     : false
-  // );
 
   function reduceFn(prv: Record<string, number>, curr: string) {
     const words: string[] = curr
@@ -248,14 +259,15 @@ export default async function ReviewPage({
               name={'Language'}
             />
             <Sixth
-              data={durationPieData}
+              data={categoryPieData}
               colorSet={['#1DF3A6', '#FFF61F', '#FFAEF2', '#1DCDF3']}
               name={'Category'}
             />
-            {/* <Sixth
+            <Sixth
               colorSet={['#4F8BFF', '#FFF61F', '#1DF3A6', '#FFAEF2']}
-              name={'Geography'}
-            /> */}
+              name={'Duration'}
+              data={durationPieData}
+            />
           </ThreeCardsGrid>
           {/* <Seventh /> */}
         </div>
