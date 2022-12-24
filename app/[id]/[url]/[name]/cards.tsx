@@ -79,7 +79,7 @@ export function First(props: React.PropsWithChildren<FirstProps>) {
           <br />
           You Spent <strong>{format(props.totalHours)} hours</strong> and
           watched <strong>{format(props.videoCounts)} videos</strong> in the
-          total of <strong>{props.totalDays}</strong> days.
+          total of <strong>{props.totalDays} days</strong>.
         </p>
         <p
           className='text-base leading-snug text-gray-900'
