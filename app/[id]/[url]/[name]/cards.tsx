@@ -271,10 +271,18 @@ interface ThirdProps {
 }
 
 export function Third(props: ThirdProps) {
-  const words = props.words
+  let words = props.words
     .filter((val) => !commonWords.includes(val.text.toLowerCase()))
     .sort((a, b) => b.value - a.value)
     .slice(0, 15);
+  if (!words.length) {
+    words = [
+      {
+        text: 'Empty',
+        value: 1,
+      },
+    ];
+  }
   const fontScale = scaleLog({
     domain: [
       Math.min(...words.map((w) => w.value)),
@@ -283,18 +291,6 @@ export function Third(props: ThirdProps) {
     range: [20, 50],
   });
   const fontSizeSetter = (datum: WordData) => fontScale(datum.value);
-  if (!words.length) {
-    return (
-      <CardBase>
-        <h1 className='text-sm font-semibold'>{props.name}</h1>
-        <div className='h-full flex'>
-          <p className='my-auto'>
-            {"Opus... Seems that there's empty cloud needed to be filled"}
-          </p>
-        </div>
-      </CardBase>
-    );
-  }
 
   return (
     <CardBase>
