@@ -2,7 +2,7 @@
 import { Group, ParentSize, scaleOrdinal } from './client';
 import { scaleLog, scaleLinear } from './client';
 import { Wordcloud, Text } from './client';
-import { PropsWithChildren } from 'react';
+import { ComponentPropsWithRef, PropsWithChildren, PropsWithRef } from 'react';
 import { EChartsReact, echarts } from './client';
 import { EChartsOption } from 'echarts';
 import { BarRounded, Pie } from './client';
@@ -351,94 +351,96 @@ export interface FourthProp {
 }
 
 export function Fourth(props: FourthProp) {
-  //   const mockData: TopRecordData[] = [
-  //     {
-  //       name: 'A',
-  //       counts: 3912,
-  //     },
-  //     {
-  //       name: 'B',
-  //       counts: 2648,
-  //     },
-  //     {
-  //       name: 'C',
-  //       counts: 1929,
-  //     },
-  //     {
-  //       name: 'D',
-  //       counts: 692,
-  //     },
-  //   ];
   const data = props.data.slice(0, 4);
+  type BarProps = {
+    backgroundWidth: number;
+    width: number;
+  } & TopRecordData;
+  const BarComponent = ({ name, counts, backgroundWidth, width }: BarProps) => (
+    <div>
+      <div className='grid grid-cols-8 mb-1'>
+        <p
+          className='text-xs w-full font-medium col-span-7 overflow-hidden text-ellipsis'
+          style={{
+            maxHeight: 16,
+          }}
+        >
+          {name}
+        </p>
+        <h6 className='text-xs font-medium text-end'>{counts}</h6>
+      </div>
+      <svg width={backgroundWidth} height={8}>
+        <BarRounded
+          radius={8}
+          x={0}
+          all
+          fill={props.shadowColor}
+          y={0}
+          width={backgroundWidth}
+          height={8}
+        ></BarRounded>
+        <BarRounded
+          radius={8}
+          x={0}
+          all
+          y={0}
+          fill={props.color}
+          width={width}
+          height={8}
+        ></BarRounded>
+      </svg>
+    </div>
+  );
   return (
     <CardBase>
       <div className='text-sm font-semibold mb-7 w-full h-full border-b'>
         {props.name}
       </div>
 
-      <div
-        className='w-full h-full grid grid-flow-row'
-        style={{
-          minWidth: 329,
-        }}
-      >
-        <div className='grid grid-cols-2 mb-4 w-full'>
-          <div className='font-normal text-xs'>{props.name}</div>
-          <div className='font-normal text-xs text-end'>{'Counts'}</div>
-        </div>
-        <div className='grid grid-flow-row gap-5 w-full h-full'>
-          {data.map((data, key) => {
-            return (
-              <div key={`bar-${key}`} className=''>
-                <div className='grid grid-cols-8 mb-1'>
-                  <p
-                    className='text-xs flex w-full font-medium col-span-7 overflow-hidden text-ellipsis'
-                    style={{
-                      maxHeight: 16,
-                    }}
-                  >
-                    {data.name}
-                  </p>
-                  <h6 className='text-xs font-medium text-end'>
-                    {data.counts}
-                  </h6>
-                </div>
-                <ParentSize>
-                  {({ width }) => {
-                    const scale = scaleLinear<number>({
-                      range: [0, width],
-                      round: true,
-                      domain: [0, Math.max(...props.data.map((d) => d.counts))],
-                    });
-                    return (
-                      <svg width={width} height={8}>
-                        <BarRounded
-                          radius={8}
-                          x={0}
-                          all
-                          fill={props.shadowColor}
-                          y={0}
-                          width={width}
-                          height={8}
-                        ></BarRounded>
-                        <BarRounded
-                          radius={8}
-                          x={0}
-                          all
-                          y={0}
-                          fill={props.color}
-                          width={scale(data.counts)}
-                          height={8}
-                        ></BarRounded>
-                      </svg>
-                    );
+      <ParentSize>
+        {(parentSize) => {
+          const scale = scaleLinear<number>({
+            range: [0, parentSize.width],
+            round: true,
+            domain: [0, Math.max(...props.data.map((d) => d.counts))],
+          });
+          return (
+            <div
+              className='grid grid-flow-row'
+              style={{
+                width: parentSize.width,
+                height: parentSize.height,
+              }}
+            >
+              <>
+                <div
+                  className='inline-grid grid-cols-2 mb-4'
+                  style={{
+                    width: parentSize.width,
                   }}
-                </ParentSize>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                >
+                  <div className='font-normal text-xs'>{props.name}</div>
+                  <div className='font-normal text-xs text-end'>{'Counts'}</div>
+                </div>
+                <div className='inline-grid grid-flow-row gap-5'>
+                  {data.map((data, key) => {
+                    return (
+                      <div key={key}>
+                        <BarComponent
+                          name={data.name}
+                          counts={data.counts}
+                          backgroundWidth={parentSize.width}
+                          width={scale(data.counts)}
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </>
+            </div>
+          );
+        }}
+      </ParentSize>
     </CardBase>
   );
 }

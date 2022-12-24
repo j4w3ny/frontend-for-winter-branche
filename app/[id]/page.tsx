@@ -69,7 +69,10 @@ export default async function ReviewPage({
   if ('error' in dto) return <div>Error Occuried: {dto.error}</div>;
   if (!dto.data.ready)
     return (
-      <div>Data Visualization is not yet ready, please wait for a moment.</div>
+      <div>
+        Data Visualization is not yet ready, please wait for a moment then
+        refresh your page.
+      </div>
     );
   const data = dto.data.takeout;
   if (!data) return <div>Error: Data is not yet ready.</div>;
