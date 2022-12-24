@@ -76,14 +76,18 @@ type DataDTO =
     }
   | { error: string };
 export async function getData(uuid: string): Promise<DataDTO> {
-  const server = process.env.SERVER_ADDR;
-  const res = await fetch(`${server}/data/?id=${uuid}`);
+  try {
+    const server = process.env.SERVER_ADDR;
+    const res = await fetch(`${server}/data/?id=${uuid}`);
 
-  if (!res.ok) {
+    if (!res.ok) {
+      const json = await res.json();
+      return { error: json.error };
+    }
     const json = await res.json();
-    return { error: json.error };
-  }
-  const json = await res.json();
 
-  return json;
+    return json;
+  } catch {
+    return { error: 'fetch failed, please refresh the page and try again.' };
+  }
 }

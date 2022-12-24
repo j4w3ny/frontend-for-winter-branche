@@ -22,6 +22,7 @@ interface FirstProps {
   timePercents: number;
   favoriteCategory: string;
   favoriteVideo: string;
+  totalDays: number;
 }
 export function First(props: React.PropsWithChildren<FirstProps>) {
   const format = Intl.NumberFormat('en', { notation: 'compact' }).format;
@@ -77,7 +78,7 @@ export function First(props: React.PropsWithChildren<FirstProps>) {
           <br />
           You Spent <strong>{format(props.totalHours)} hours</strong> and
           watched <strong>{format(props.videoCounts)} videos</strong> in the
-          total of 217 days.
+          total of {props.totalDays} days.
         </p>
         <p
           className='text-base leading-snug text-gray-900'

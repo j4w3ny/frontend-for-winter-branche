@@ -73,11 +73,12 @@ export default async function ReviewPage({
     );
   const data = dto.data.takeout;
   if (!data) return <div>Error: Data is not yet ready.</div>;
+
   const totalHours =
     data.category_duration_detail.reduce((a, b) => a + b.watchTime_min, 0) / 60;
 
   const watchTimeMins = data.category_duration_detail;
-
+  const totalDays = data.stat.active_total_day[0];
   const watchTimeMost = watchTimeMins.find(
     (value) =>
       value.watchTime_min ===
@@ -85,10 +86,10 @@ export default async function ReviewPage({
         ...data.category_duration_detail.map((value) => value.watchTime_min)
       )
   )!;
+
   const categoryNameOfMost = data.category_duration_detail.find(
     (value) => value.categoryName === watchTimeMost.categoryName
   )!;
-
   const videoRecord: TopRecordData[] = data.top5.map((item) => {
     return { name: decode(item.video_title), counts: item.watch_times };
   });
@@ -189,6 +190,7 @@ export default async function ReviewPage({
     .map((val) => val.searches!)
     .reduce(reduceFn, {});
   const searchWords = toWordDatas(searchWordsFreqMap);
+
   return (
     <Suspense fallback='loading...'>
       <div className={`${poppins.className} bg-gray-100`}>
@@ -204,6 +206,7 @@ export default async function ReviewPage({
               timePercents={watchTimeMost.watchTime_min / totalHours}
               favoriteCategory={categoryNameOfMost.categoryName}
               favoriteVideo={data.top5[0].video_title}
+              totalDays={totalDays}
             />
           </TwoCardsGrid>
           <TwoCardsGrid>
@@ -211,7 +214,7 @@ export default async function ReviewPage({
               data={heatmapData}
               videoPerDay={data.stat.video_watched_per_day[0]}
               videos={data.stat.watched[0]}
-              yearlyTotal={data.stat.active_total_day[0]}
+              yearlyTotal={totalDays}
               hours={totalHours}
               uptimes={data.stat.uptime[0]}
               hoursPerDay={totalHours / data.stat.active_total_day[0]}
