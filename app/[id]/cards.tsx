@@ -360,13 +360,15 @@ export function Fourth(props: FourthProp) {
     <div>
       <div className='grid grid-cols-8 mb-1'>
         <p
-          className='text-xs w-full font-medium col-span-7 overflow-hidden text-ellipsis'
+          className='text-xs w-full font-medium col-span-7 overflow-hidden truncate'
           style={{
             maxHeight: 16,
+            width: 'calc(100%)',
           }}
         >
           {name}
         </p>
+
         <h6 className='text-xs font-medium text-end'>{counts}</h6>
       </div>
       <svg width={backgroundWidth} height={8}>
@@ -409,7 +411,7 @@ export function Fourth(props: FourthProp) {
               className='grid grid-flow-row'
               style={{
                 width: parentSize.width,
-                height: parentSize.height,
+                // height: parentSize.height,
               }}
             >
               <>
