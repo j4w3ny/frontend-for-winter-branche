@@ -271,7 +271,7 @@ export default async function ReviewPage({
             <Sixth
               data={durationPieData}
               colorSet={['#1DF3A6', '#FFF61F', '#FFAEF2', '#1DCDF3']}
-              name={'Category Duration'}
+              name={'Duration'}
             />
             {/* <Sixth
               colorSet={['#4F8BFF', '#FFF61F', '#1DF3A6', '#FFAEF2']}
