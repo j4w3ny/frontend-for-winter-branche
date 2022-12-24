@@ -51,24 +51,36 @@ type DataDTO =
                   '0': string;
                 };
               };
-              year_detail: {
-                video_title: string | null;
+              heatmap: Record<string, number>;
+              wordcloud: {
+                videos: string[];
+                comments: string[];
+                searches: string[];
+              };
+              duration: {
+                below_one_minute: number;
+                one_to_five: number;
+                five_to_ten: number;
+                above_ten: number;
+              };
+              // year_detail: {
+              //   video_title: string | null;
 
-                video_id: string | null;
-                video_link: string | null;
-                channel_link: string | null;
+              //   video_id: string | null;
+              //   video_link: string | null;
+              //   channel_link: string | null;
 
-                channel_title: string | null;
-                watch_time: string | null;
-                searches: string | null;
-                searches_link: string | null;
-                search_time: string | null;
-                liked_video_id: string | null;
-                liked_video_link: string | null;
-                liked_time: string | null;
-                comments: string | null;
-                comment_time: string | null;
-              }[];
+              //   channel_title: string | null;
+              //   watch_time: string | null;
+              //   searches: string | null;
+              //   searches_link: string | null;
+              //   search_time: string | null;
+              //   liked_video_id: string | null;
+              //   liked_video_link: string | null;
+              //   liked_time: string | null;
+              //   comments: string | null;
+              //   comment_time: string | null;
+              // }[];
             }
           | undefined;
         ready: boolean;

@@ -76,7 +76,7 @@ export default async function ReviewPage({
     );
   const data = dto.data.takeout;
   if (!data) return <div>Error: Data is not yet ready.</div>;
-
+  console.log(data);
   const totalHours =
     data.category_duration_detail.reduce((a, b) => a + b.watchTime_min, 0) / 60;
 
@@ -139,25 +139,13 @@ export default async function ReviewPage({
     }
   );
 
-  const heatmapData = Object.entries(
-    data.year_detail
-      .filter((item) => item.watch_time)
-      .map((item) => format(new Date(item.watch_time!), 'yyyy-MM-dd'))
-      .reduce((acc, curr) => {
-        if (acc[curr]) {
-          acc[curr] += 1;
-        } else {
-          acc[curr] = 1;
-        }
-        return acc;
-      }, {} as Record<string, number>)
-  );
+  const heatmapData = Object.entries(data.heatmap);
 
-  const wordcloudData = data.year_detail.filter((val) =>
-    val.watch_time && val.video_title
-      ? new Date(val.watch_time).getFullYear() == 2022
-      : false
-  );
+  // const wordcloudData = data.year_detail.filter((val) =>
+  //   val.watch_time && val.video_title
+  //     ? new Date(val.watch_time).getFullYear() == 2022
+  //     : false
+  // );
 
   function reduceFn(prv: Record<string, number>, curr: string) {
     const words: string[] = curr
@@ -177,21 +165,12 @@ export default async function ReviewPage({
       text: word,
       value: records[word],
     }));
-  const videoWordsFreqMap = wordcloudData
-    .filter((val) => val.video_title)
-    .map((val) => val.video_title!)
-    .reduce(reduceFn, {});
+  const videoWordsFreqMap = data.wordcloud.videos.reduce(reduceFn, {});
   const videoWords: WordData[] = toWordDatas(videoWordsFreqMap);
 
-  const commentWordsFreqMap = wordcloudData
-    .filter((val) => val.comments)
-    .map((val) => val.comments!)
-    .reduce(reduceFn, {});
+  const commentWordsFreqMap = data.wordcloud.comments.reduce(reduceFn, {});
   const commentWords = toWordDatas(commentWordsFreqMap);
-  const searchWordsFreqMap = wordcloudData
-    .filter((val) => val.searches)
-    .map((val) => val.searches!)
-    .reduce(reduceFn, {});
+  const searchWordsFreqMap = data.wordcloud.searches.reduce(reduceFn, {});
   const searchWords = toWordDatas(searchWordsFreqMap);
 
   return (
@@ -271,7 +250,7 @@ export default async function ReviewPage({
             <Sixth
               data={durationPieData}
               colorSet={['#1DF3A6', '#FFF61F', '#FFAEF2', '#1DCDF3']}
-              name={'Duration'}
+              name={'Category'}
             />
             {/* <Sixth
               colorSet={['#4F8BFF', '#FFF61F', '#1DF3A6', '#FFAEF2']}
