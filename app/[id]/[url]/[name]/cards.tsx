@@ -23,6 +23,7 @@ interface FirstProps {
   favoriteCategory: string;
   favoriteVideo: string;
   totalDays: number;
+  avatar?: string;
 }
 export function First(props: React.PropsWithChildren<FirstProps>) {
   const format = Intl.NumberFormat('en', { notation: 'compact' }).format;
@@ -40,7 +41,7 @@ export function First(props: React.PropsWithChildren<FirstProps>) {
           </div>
           <img
             className='w-16 h-16 rounded-2xl'
-            src='https://via.placeholder.com/60x60'
+            src={props.avatar ?? 'https://via.placeholder.com/60x60'}
           />
         </div>
         <div className='inline-flex w-full space-x-16 items-start justify-between'>
@@ -78,7 +79,7 @@ export function First(props: React.PropsWithChildren<FirstProps>) {
           <br />
           You Spent <strong>{format(props.totalHours)} hours</strong> and
           watched <strong>{format(props.videoCounts)} videos</strong> in the
-          total of {props.totalDays} days.
+          total of <strong>{props.totalDays}</strong> days.
         </p>
         <p
           className='text-base leading-snug text-gray-900'

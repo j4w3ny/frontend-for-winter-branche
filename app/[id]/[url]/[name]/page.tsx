@@ -16,8 +16,6 @@ import {
 import langTags from 'language-tags';
 
 import { getData } from './getData';
-import { NextPage } from 'next';
-import { redirect } from 'next/navigation';
 const audioWide = Audiowide({ weight: '400', subsets: ['latin'] });
 const poppins = Poppins({
   weight: ['400', '600', '500', '700'],
@@ -27,7 +25,10 @@ const poppins = Poppins({
 function Header() {
   return (
     <div className={audioWide.className + ' pl-9 header-bg header-bg-m '}>
-      <div className='pt-12 pb-6'>Youtube LOGO</div>
+      <div className='pt-12 pb-6 flex gap-2'>
+        <img src={'/assets/youtube_logo.svg'} />
+        <p className='px-1'>Youtube</p>
+      </div>
       <h1 className='text-6xl text-gray-900 uppercase pb-6'>2022 Review</h1>
     </div>
   );
@@ -61,9 +62,11 @@ function Footer() {
 export default async function ReviewPage({
   params,
 }: {
-  params: { id: string };
+  params: { id: string; url: string; name: string };
 }) {
   const id = params.id;
+  const url = decodeURIComponent(params.url);
+  const name = params.name;
 
   const dto = await getData(id);
   if ('error' in dto) return <div>Error Occuried: {dto.error}</div>;
@@ -191,6 +194,8 @@ export default async function ReviewPage({
         <div className='grid gap-4 grid-cols-1 py-4'>
           <TwoCardsGrid>
             <First
+              name={name}
+              avatar={url}
               search={data.stat.searches[0]}
               likes={data.stat.likes[0]}
               comments={data.stat.comments[0]}
